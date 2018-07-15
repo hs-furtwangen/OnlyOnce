@@ -37,10 +37,15 @@ public class PhysicsObject : MonoBehaviour {
     
     void Update ()
     {
+        CheckPants();
+
         targetVelocity = Vector2.zero;
         if (allowMovement)
             ComputeVelocity (); 
     }
+
+    protected virtual void CheckPants()
+    { }
 
     protected virtual void ComputeVelocity()
     {
@@ -51,12 +56,12 @@ public class PhysicsObject : MonoBehaviour {
     {
         if (allowMovement)
         {
-            velocity += gravityModifier * Physics2D.gravity * Time.unscaledDeltaTime;
+            velocity += gravityModifier * Physics2D.gravity * Time.deltaTime;
             velocity.x = targetVelocity.x;
 
             grounded = false;
 
-            Vector2 deltaPosition = velocity * Time.unscaledDeltaTime;
+            Vector2 deltaPosition = velocity * Time.deltaTime;
 
             Vector2 moveAlongGround = new Vector2(groundNormal.y, -groundNormal.x);
 

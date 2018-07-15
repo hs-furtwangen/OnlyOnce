@@ -16,6 +16,11 @@ public class PlayerPlatformerController : PhysicsObject {
     private bool _hasPants = false;
 
     private Vector2 newBrellaPos;
+    private Vector2[] pantsPos;
+    private float pantsTimer;
+    public float pantsInterval = 1;
+    private int pantsIndex = 0;
+    private int pantsSize = 5;
 
     public GameObject BrellaAnim;
     public GameObject GapAnim;
@@ -24,6 +29,13 @@ public class PlayerPlatformerController : PhysicsObject {
 
     void Start()
     {
+        pantsPos = new Vector2[pantsSize];
+
+        for (int i = 0; i < pantsPos.Length; i++)
+        {
+            pantsPos[i] = this.transform.position;
+        }
+
         if (Instance == null)
         {
             Instance = this;
@@ -73,12 +85,11 @@ public class PlayerPlatformerController : PhysicsObject {
                         newBrellaPos = hit.point + Vector2.left;
                     }
                 }
-
-
             }
             if (_hasClock && Input.GetButtonDown("Fire2"))
             {
                 _hasClock = false;
+                GameController.Instance.ScaleTime();
             }
             if (_hasPants && Input.GetButtonDown("Fire3"))
             {
@@ -110,8 +121,16 @@ public class PlayerPlatformerController : PhysicsObject {
 
     void Kill()
     {
-        alive = false;
-        animator.SetTrigger("death");
+        if (_hasPants)
+        {
+            _hasPants = false;
+            this.transform.position = pantsPos[pantsIndex];
+        }
+        else
+        {
+            alive = false;
+            animator.SetTrigger("death");
+        }
     }
 
     void OnTriggerEnter2D(Collider2D collider)
@@ -170,5 +189,25 @@ public class PlayerPlatformerController : PhysicsObject {
     {
         Instantiate(GapAnim, newBrellaPos, Quaternion.identity);
         this.transform.position = newBrellaPos;
+    }
+
+    protected override void CheckPants()
+    {
+        if (pantsTimer <= 0)
+        {
+            pantsTimer = pantsInterval;
+
+            pantsPos[pantsIndex] = this.transform.position;
+
+            pantsIndex++;
+            if (pantsIndex >= pantsPos.Length)
+            {
+                pantsIndex = 0;
+            }
+        }
+        else
+        {
+            pantsTimer -= Time.unscaledDeltaTime;
+        }
     }
 }
