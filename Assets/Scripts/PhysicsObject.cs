@@ -56,12 +56,12 @@ public class PhysicsObject : MonoBehaviour {
     {
         if (allowMovement)
         {
-            velocity += gravityModifier * Physics2D.gravity * Time.deltaTime;
+            velocity += gravityModifier * Physics2D.gravity * Time.unscaledDeltaTime;
             velocity.x = targetVelocity.x;
 
             grounded = false;
 
-            Vector2 deltaPosition = velocity * Time.deltaTime;
+            Vector2 deltaPosition = velocity * Time.unscaledDeltaTime;
 
             Vector2 moveAlongGround = new Vector2(groundNormal.y, -groundNormal.x);
 

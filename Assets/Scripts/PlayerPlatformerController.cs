@@ -6,7 +6,7 @@ using UnityEngine;
 public class PlayerPlatformerController : PhysicsObject {
 
     public float maxSpeed = 7;
-    public float jumpTakeOffSpeed = 7;
+    public float jumpTakeOffSpeed = 9;
 
     private SpriteRenderer spriteRenderer;
     private Animator animator;
@@ -20,7 +20,9 @@ public class PlayerPlatformerController : PhysicsObject {
     private float pantsTimer;
     public float pantsInterval = 1;
     private int pantsIndex = 0;
-    private int pantsSize = 5;
+    private int pantsSize = 4;
+
+    private bool bounce = false;
 
     public GameObject BrellaAnim;
     public GameObject GapAnim;
@@ -57,9 +59,10 @@ public class PlayerPlatformerController : PhysicsObject {
         {
             move.x = Input.GetAxis("Horizontal");
 
-            if (Input.GetButtonDown("Jump") && grounded)
+            if (Input.GetButtonDown("Jump") && grounded || bounce)
             {
                 velocity.y = jumpTakeOffSpeed;
+                bounce = false;
             }
             else if (Input.GetButtonUp("Jump"))
             {
@@ -119,7 +122,7 @@ public class PlayerPlatformerController : PhysicsObject {
         targetVelocity = move * maxSpeed;
     }
 
-    void Kill()
+    public void Kill()
     {
         if (_hasPants)
         {
@@ -209,5 +212,10 @@ public class PlayerPlatformerController : PhysicsObject {
         {
             pantsTimer -= Time.unscaledDeltaTime;
         }
+    }
+
+    public void Bump()
+    {
+        bounce = true;
     }
 }
